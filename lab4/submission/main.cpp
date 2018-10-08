@@ -148,9 +148,6 @@ int main(int argc, char * argv[]) {
         unsigned int* x = &box.meshes[0].indices[i];
         *x = box.meshes[0].indices[i] + crayon.meshes[0].vertices.size();
     }
-    // for (unsigned int i: box.meshes[0].indices) {
-    //     std::cout << i << std::endl;
-    // }
     std::cout << box.meshes[0].indices.size() << std::endl;
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, size+size2, 0, GL_STATIC_DRAW);
     glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, size, crayon.meshes[0].indices.data());
@@ -160,11 +157,10 @@ int main(int argc, char * argv[]) {
     // Load the shaders
     GLuint myShader = LoadProgram("/home/dallinfrank/Documents/Glitter/Glitter/Shaders/basic.vert", "/home/dallinfrank/Documents/Glitter/Glitter/Shaders/basic.frag");
 
-    // Connect vertex data to shader variables
     // position attribute
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    // color attribute
+    // normal attribute
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     // uv attribute
@@ -173,16 +169,12 @@ int main(int argc, char * argv[]) {
     
     unsigned int texture1;
     glGenTextures(1, &texture1);
-    glBindTexture(GL_TEXTURE_2D, texture1); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
-    // set the texture wrapping parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+    glBindTexture(GL_TEXTURE_2D, texture1);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    // set texture filtering parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    // load image, create texture and generate mipmaps
     int width, height, nrChannels;
-    // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
     unsigned char *data = stbi_load("/home/dallinfrank/Documents/cs455/lab4/violetCrayon.png", &width, &height, &nrChannels, 0);
     if (data) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -195,15 +187,11 @@ int main(int argc, char * argv[]) {
 
     unsigned int texture2;
     glGenTextures(1, &texture2);
-    glBindTexture(GL_TEXTURE_2D, texture2); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
-    // set the texture wrapping parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    // set texture filtering parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    // load image, create texture and generate mipmaps
-    // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
     data = stbi_load("/home/dallinfrank/Documents/cs455/lab4/CrayonBox2.png", &width, &height, &nrChannels, 0);
     if (data) {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -254,8 +242,6 @@ int main(int argc, char * argv[]) {
         glDrawElements(GL_TRIANGLES, crayon.meshes[0].indices.size(), GL_UNSIGNED_INT, 0);
 
         glBindTexture(GL_TEXTURE_2D, texture2);
-        // glUseProgram(myShader);
-        // glBindVertexArray(VAO);
         Trans = glm::mat4(1.0f);
         Trans = glm::translate(Trans, glm::vec3(2.5f, -1.0f, 0.0f));
         Trans = glm::scale(Trans, glm::vec3(0.2f, 0.2f, 0.2f));
