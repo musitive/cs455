@@ -1,7 +1,16 @@
-all: tracer
+CC = g++
+CC_FLAGS = -g
+CC_VERSION = -std=c++17
 
-tracer:
-	g++ -g -std=c++17 rayTracer.cpp -o tracer
+EXEC = tracer
+SOURCES = $(wildcard *.cpp)
+OBJECTS = $(SOURCES:.cpp=.o)
+
+$(EXEC): $(OBJECTS)
+	$(CC) $(CC_FLAGS) $(CC_VERSION) $(OBJECTS) -o $@
+
+%.o: %.cpp
+	$(CC) -c $(CC_FLAGS) $(CC_VERSION) $< -o $@
 
 clean:
-	rm tracer
+	rm -f $(EXEC) $(OBJECTS)

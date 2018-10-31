@@ -9,7 +9,7 @@
             "request": "launch",
             "name": "Debug",
             "program": "${workspaceRoot}/tracer",
-            "args": ["20", "20", "1.ppm"],
+            "args": ["10", "10", "testCases/test.rayTracing", "2.ppm"],
             "cwd": "${workspaceRoot}"
         }
     ]
