@@ -10,6 +10,7 @@ Environment* FileManager::readFile(const string& fileName) {
     Environment* env = new Environment();
 
     inputFile.open(fileName, ios::in);
+    inputFile >> line_header >> env->width >> line_header >> env->height;
     inputFile >> line_header >> env->at.x >> env->at.y >> env->at.z;
     inputFile >> line_header >> env->from.x >> env->from.y >> env->from.z;
     inputFile >> line_header >> env->up.x >> env->up.y >> env->up.z;

@@ -1,0 +1,15 @@
+WIDTH 1920 HEIGHT 1080
+CameraLookAt 0 0 -1
+CameraLookFrom 0 0 0
+CameraLookUp 0 1 0
+FieldOfView 45
+DirectionToLight 0 1 0 LightColor 1 1 1
+AmbientLight .5 .5 .5
+BackgroundColor .2 .2 .2
+Sphere Center 0 0 -2.35 Radius .35 Material Diffuse  .9 .9 .9 SpecularHighlight 1 1 1 PhongConstant 10
+Triangle  0  0 -4    2  0     -2    1  1.732 -2   Material Reflective .8 .2 .2
+Triangle  0  0 -4    1  1.732 -2   -1  1.732 -2   Material Reflective .8 .8 .2
+Triangle  0  0 -4   -1  1.732 -2   -2  0     -2   Material Reflective .2 .8 .2
+Triangle  0  0 -4   -2  0     -2   -1 -1.732 -2   Material Reflective .2 .8 .8
+Triangle  0  0 -4   -1 -1.732 -2    1 -1.732 -2   Material Reflective .2 .2 .8
+Triangle  0  0 -4    1 -1.732 -2    2  0     -2   Material Reflective .8 .2 .8

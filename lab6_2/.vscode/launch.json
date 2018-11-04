@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/tracer",
-            "args": ["SceneII.rayTracing", "2.ppm"],
+            "args": ["test.rayTracing", "5.ppm"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

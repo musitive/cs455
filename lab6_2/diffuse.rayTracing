@@ -1,7 +1,8 @@
+WIDTH 1920 HEIGHT 1080
 CameraLookAt 0 0 -1
 CameraLookFrom 0 0 0
 CameraLookUp 0 1 0
-FieldOfView 56
+FieldOfView 50
 DirectionToLight 1 0 -1 LightColor 1 1 1
 AmbientLight .1 .1 .1
 BackgroundColor .2 .2 .2

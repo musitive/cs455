@@ -7,8 +7,8 @@ double RayTracer::jitter(int i, double scale) {
 }
 
 Ray RayTracer::computeRay(double i, double j, double angle, double aspectratio, Environment* env) {
-    double xx = (2 * (i * 1/PLACE) - 1) * angle * aspectratio;
-    double yy = (1 - 2 * (j * 1/PLACE)) * angle;
+    double xx = (2 * (i * 1/env->width) - 1) * angle * aspectratio;
+    double yy = (1 - 2 * (j * 1/env->height)) * angle;
     Position look_from = env->from;
     Position look_at = Position(xx,yy,0) + env->at;
 
@@ -17,25 +17,31 @@ Ray RayTracer::computeRay(double i, double j, double angle, double aspectratio, 
 }
 
 Ray RayTracer::jitter(Ray ray) {
-    double scale = 0.025;
-    ray.rd = Direction(Position(jitter(ray.rd.x, scale),jitter(ray.rd.y, scale),jitter(ray.rd.z, scale)));
+    uniform_real_distribution<double> unif(0,0.1);
+    default_random_engine re;
+    ray.rd = Direction(Position(ray.rd.x+unif(re),ray.rd.y+unif(re),ray.rd.z+unif(re)));
     return ray;
 }
 
-Colori RayTracer::trace(Ray ray, Environment* env) {
+Colori RayTracer::trace(Ray ray, Environment* env, Object* current, const int& depth) {
+    if (depth >= MAX_DEPTH)
+        return Colori();
+
     Position p = Position(numeric_limits<double>::infinity());
     Object* closest = NULL;
 
     for(Object* o: env->env) {
-        Position np = o->findIntersect(ray);
-        if(length(np) < length(p)) {
-            closest = o;
-            p = np;
+        if (o != current) {
+            Position np = o->findIntersect(ray);
+            if(length(np - ray.r0) < length(p - ray.r0)) {
+                closest = o;
+                p = np;
+            }
         }
     }
     
     if (!closest)
-        return BACKGROUND;
+        return Colori(env->background.x*255,env->background.y*255,env->background.z*255);
     else {
         bool blocked = false;
         Light light = { env->light_color, env->light_position };
@@ -43,24 +49,26 @@ Colori RayTracer::trace(Ray ray, Environment* env) {
         Ray toLight(p, l);
         double distance = length(light.position - p);
         for (Object* o: env->env) {
-            if (length(light.position - o->findIntersect(toLight)) < distance) {
-                blocked = true;
-                break;
+            if (o != closest) {
+                if (length(light.position - o->findIntersect(toLight, false)) < distance) {
+                    blocked = true;
+                    break;
+                }
             }
         }
         if (closest->getMaterial()->isReflective) {
             Ray newRay(p, closest->computeNormal(p));
-            Colori ci = closest->computeColor(ray.r0, p, light, false);
+            Colori ci = closest->computeColor(ray.r0, p, light, false, env->ambient_light);
             Colord cd = Colord(ci.x/255.,ci.y/255.,ci.z/255.);
             Colori ct = Colori();
             for(int y = 0; y < 4; y++) {
-                ct = ct + trace(newRay, env);
+                ct = ct + trace(jitter(newRay), env, closest, depth+1);
             }
             ct = ct / 4;
             return Colori(ct.x*cd.x,ct.y*cd.y,ct.z*cd.z);
         }
         else
-            return closest->computeColor(ray.r0, p, light, blocked);
+            return closest->computeColor(ray.r0, p, light, blocked, env->ambient_light);
     }
 }
 
@@ -68,7 +76,7 @@ vector<Colori> RayTracer::subdivide(int i, int j, double scale, double angle, do
     vector<Colori> colors = vector<Colori>();
     for(int y = 0; y < scale; y++) {
         for(int x = 0; x < scale; x++) {
-            colors.push_back(trace(computeRay(jitter(i, 1 / scale) + x / scale, jitter(j, 1 / scale) + y / scale, angle, aspectratio, env), env));
+            colors.push_back(trace(computeRay(jitter(i, 1 / scale) + x / scale, jitter(j, 1 / scale) + y / scale, angle, aspectratio, env), env, NULL, 0));
         }
     }
     return colors;

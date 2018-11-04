@@ -1,3 +1,4 @@
+WIDTH 1920 HEIGHT 1080
 CameraLookAt 0 0 -1
 CameraLookFrom 0 0 1
 CameraLookUp 0 1 0
