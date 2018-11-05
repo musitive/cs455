@@ -25,7 +25,7 @@ Ray RayTracer::jitter(Ray ray) {
 
 Colori RayTracer::trace(Ray ray, Environment* env, Object* current, const int& depth) {
     if (depth >= MAX_DEPTH)
-        return Colori();
+        return Colori(255);
 
     Position p = Position(numeric_limits<double>::infinity());
     Object* closest = NULL;
@@ -57,7 +57,10 @@ Colori RayTracer::trace(Ray ray, Environment* env, Object* current, const int& d
             }
         }
         if (closest->getMaterial()->isReflective) {
-            Ray newRay(p, closest->computeNormal(p));
+            Direction n = closest->computeNormal(p);
+            double dt = dot(ray.rd, n);
+            Direction r = n * dt * 2 - ray.rd;
+            Ray newRay(p, -r);
             Colori ci = closest->computeColor(ray.r0, p, light, false, env->ambient_light);
             Colord cd = Colord(ci.x/255.,ci.y/255.,ci.z/255.);
             Colori ct = Colori();

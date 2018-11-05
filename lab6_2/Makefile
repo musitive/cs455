@@ -9,5 +9,8 @@ test:
 	./tracer diffuse.rayTracing diffuse.ppm &
 	./tracer test2.rayTracing test2.ppm &
 
+handin:
+	tar -czf raytracer.tar *.cpp *.h diffuse.ppm test.ppm SceneII.ppm
+
 clean:
 	rm -f tracer
