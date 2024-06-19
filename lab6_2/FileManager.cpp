@@ -38,7 +38,7 @@ Environment* FileManager::readFile(const string& fileName) {
             o = new Triangle(v1, v2, v3);;
         }
         inputFile >> line_header >> line_header;
-        Material* m;
+        Material* material;
         if (line_header == "Diffuse") {
             Colord diffuse = Colord();
             Colord specular = Colord();
@@ -46,14 +46,14 @@ Environment* FileManager::readFile(const string& fileName) {
             inputFile >> diffuse.x >> diffuse.y >> diffuse.z;
             inputFile >> line_header >> specular.x >> specular.y >> specular.z;
             inputFile >> line_header >> phong;
-            m = new Diffuse(diffuse, specular, phong);
+            material = new Diffuse(diffuse, specular, phong);
         }
         else if (line_header == "Reflective") {
             Colord reflective = Colord();
             inputFile >> reflective.x >> reflective.y >> reflective.z;
-            m = new Reflective(reflective);
+            material = new Reflective(reflective);
         }
-        o->setMaterial(m);
+        o->setMaterial(material);
         env->env.push_back(o);
         inputFile >> line_header;
     }

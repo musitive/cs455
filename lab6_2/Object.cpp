@@ -4,31 +4,12 @@
 
 using namespace std;
 
-const Position MISS = Position(numeric_limits<double>::infinity());
-
-Position Sphere::findIntersect(Ray r, bool culling) {
-    Position l = c - r.r0;
-    double tca = dot(l, r.rd);
-
-    if (tca < 0)
-        return MISS;
-
-    double d2 = dot(l, l) - tca * tca;
-
-    if (d2 > pow(rad, 2))
-        return MISS;
-
-    double thc = sqrt(pow(rad, 2) - d2);
-    double t0 = tca - thc;
-    double t1 = tca + thc;
-
-    Position p = r.findPosition(t0);
-
-    return p;
+void Object::setMaterial(Material* material) {
+    this->material = material;
 }
 
-Direction Sphere::computeNormal(Position p) {
-    return Direction(p - c);
+Material* Object::getMaterial() {
+    return this->material;
 }
 
 Position Triangle::findIntersect(Ray r, bool culling) {
@@ -98,5 +79,5 @@ Direction Triangle::computeNormal(Position p) {
 Colori Object::computeColor(Position from, Position p, Light light, bool blocked, Colord ambient) {
     Direction n = computeNormal(p);
 
-    return m->computeColor(from, p, n, light, blocked, ambient);
+    return material->computeColor(from, p, n, light, blocked, ambient);
 }

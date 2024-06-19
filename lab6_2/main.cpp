@@ -17,16 +17,19 @@ Vec3<T> average(vector<Vec3<T>> v) {
 };
 
 int main(int argc, char** argv) {
+    char* input_filename = argv[1];
+    char* output_filename = argv[2];
+
     srand(time(0));
 
     FileManager* fm = new FileManager();
-    Environment* env = fm->readFile(argv[1]);
+    Environment* env = fm->readFile(input_filename);
 
     const int IMAX = env->width, IMIN = 0, JMAX = env->height, JMIN = 0;
     const double UMAX = 1, UMIN = -1, VMAX = -1, VMIN = 1;
     const int MAX_COLOR = 255;
 
-    fm->prepOutputFile(argv[2], IMAX, JMAX, MAX_COLOR);
+    fm->prepOutputFile(output_filename, IMAX, JMAX, MAX_COLOR);
     double fov = env->fov, aspectratio = IMAX / double(JMAX);
     double angle = tan(M_PI * 0.5 * fov / 180.);
 
