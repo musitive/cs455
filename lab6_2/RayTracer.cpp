@@ -19,7 +19,7 @@ Ray RayTracer::computeRay(double i, double j, double angle, double aspectratio, 
 Ray RayTracer::jitter(Ray ray) {
     uniform_real_distribution<double> unif(0,0.1);
     default_random_engine re;
-    ray.rd = Direction(Position(ray.rd.x+unif(re),ray.rd.y+unif(re),ray.rd.z+unif(re)));
+    ray.direction = Direction(Position(ray.direction.x+unif(re),ray.direction.y+unif(re),ray.direction.z+unif(re)));
     return ray;
 }
 
@@ -32,8 +32,8 @@ Colori RayTracer::trace(Ray ray, Environment* env, Object* current, const int& d
 
     for(Object* o: env->env) {
         if (o != current) {
-            Position np = o->findIntersect(ray);
-            if(length(np - ray.r0) < length(p - ray.r0)) {
+            Position np = o->calculateIntersection(ray);
+            if(length(np - ray.origin) < length(p - ray.origin)) {
                 closest = o;
                 p = np;
             }
@@ -50,7 +50,7 @@ Colori RayTracer::trace(Ray ray, Environment* env, Object* current, const int& d
         double distance = length(light.position - p);
         for (Object* o: env->env) {
             if (o != closest) {
-                if (length(light.position - o->findIntersect(toLight, false)) < distance) {
+                if (length(light.position - o->calculateIntersection(toLight, false)) < distance) {
                     blocked = true;
                     break;
                 }
@@ -58,10 +58,10 @@ Colori RayTracer::trace(Ray ray, Environment* env, Object* current, const int& d
         }
         if (closest->getMaterial()->isReflective) {
             Direction n = closest->computeNormal(p);
-            double dt = dot(ray.rd, n);
-            Direction r = n * dt * 2 - ray.rd;
+            double dt = dot(ray.direction, n);
+            Direction r = n * dt * 2 - ray.direction;
             Ray newRay(p, -r);
-            Colori ci = closest->computeColor(ray.r0, p, light, false, env->ambient_light);
+            Colori ci = closest->computeColor(ray.origin, p, light, false, env->ambient_light);
             Colord cd = Colord(ci.x/255.,ci.y/255.,ci.z/255.);
             Colori ct = Colori();
             for(int y = 0; y < 4; y++) {
@@ -71,7 +71,7 @@ Colori RayTracer::trace(Ray ray, Environment* env, Object* current, const int& d
             return Colori(ct.x*cd.x,ct.y*cd.y,ct.z*cd.z);
         }
         else
-            return closest->computeColor(ray.r0, p, light, blocked, env->ambient_light);
+            return closest->computeColor(ray.origin, p, light, blocked, env->ambient_light);
     }
 }
 

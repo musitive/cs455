@@ -1,29 +1,41 @@
 #include "Sphere.h"
 #include "Vec.h"
 
-Sphere::Sphere(Position c, double rad) : c(c), radius(rad) {}
+Sphere::Sphere(Position center, double radius) : center(center), radius(radius) {}
 
-Position Sphere::findIntersect(Ray r, bool culling) {
-    Position l = c - r.r0;
-    double tca = dot(l, r.rd);
+Position Sphere::calculateIntersection(Ray ray, bool culling) {
+    // Distance between the center of the sphere and the origin of the ray
+    // OC = S_c - r_0
+    Position distance_to_origin = this->center - ray.origin;
+
+    // tca = OC . r_d
+    double tca = dot(distance_to_origin, ray.direction);
 
     if (tca < 0)
         return MISS;
 
-    double d2 = dot(l, l) - tca * tca;
+    // d^2 = ||OC||^2 - tca^2
+    double d_squared = dot(distance_to_origin, distance_to_origin) - pow(tca, 2);
+    double radius_squared = pow(radius, 2);
 
-    if (d2 > pow(radius, 2))
+    // if d^2 > r^2, the ray misses the sphere
+    if (d_squared > radius_squared)
         return MISS;
 
-    double thc = sqrt(pow(radius, 2) - d2);
-    double t0 = tca - thc;
-    double t1 = tca + thc;
+    // thc = sqrt(r^2 - d^2)
+    double thc = sqrt(radius_squared - d_squared);
 
-    Position p = r.findPosition(t0);
+    // if the origin of the ray is outside of the sphere
+    double root = tca - thc;
 
-    return p;
+    // else use the positive root
+    // root = tca + thc;
+
+    Position intersection = ray.findPositionOnRay(root);
+
+    return intersection;
 }
 
-Direction Sphere::computeNormal(Position p) {
-    return Direction(p - c);
+Direction Sphere::computeNormal(Position position) {
+    return Direction(position - center);
 }

@@ -48,17 +48,17 @@ class Direction : public Position {
 
 class Ray {
     public:
-        Position r0;
-        Direction rd;
+        Position origin;        // r_0
+        Direction direction;    // r_d
 
-        Ray(Position eye, Direction s) : r0(eye), rd(s) {}
-        Position findPosition(double t) {
-            return r0 + rd * t;
+        Ray(Position eye, Direction s) : origin(eye), direction(s) {}
+        Position findPositionOnRay(double t) {
+            return origin + direction * t;
         }
 };
 
 double dot(Position& vec1, Position& vec2);
 
-Position cross(Position& vec1, Position& vec2);
+Position cross_product(Position& vec1, Position& vec2);
 
 Colori bound(const Colord& v, const double min=0, const double max=1);
